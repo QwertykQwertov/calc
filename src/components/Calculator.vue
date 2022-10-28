@@ -27,7 +27,7 @@
       >
         {{ operand }}
       </button>
-      <button class="cell operand">C</button>
+      <button class="cell operand" @click="removeLast">C</button>
       <button class="cell operand" @click="reset">R</button>
       <button class="cell operand" @click="result">=</button>
     </div>
@@ -39,24 +39,43 @@ export default {
   name: "HelloWorld",
   data() {
     return {
-      nums: ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+      nums: [1, 2, 3, 4, 5, 6, 7, 8, 9],
       operands: ["-", "*", "/", "(", ")"],
       value: "",
+      lastSymbol: '',
+      isOpen: false
     };
   },
   methods: {
     result() {
+      if(!Number.isInteger(this.lastSymbol) && this.lastSymbol !== ")"){
+        alert("Некорректный ввод!")
+      }
       this.value = eval(this.value);
       this.value += "";
     },
     input(symbol) {
       // Добавить проверку на некорректный ввод +добавить computed() и replace недопустимые символы
+      if (symbol === "("){
+        if(this.isOpen === true) return
+        this.isOpen = true
+      } 
+      if (symbol === ")"){
+        if(this.isOpen === false) return
+        this.isOpen = false
+      } 
+      this.lastSymbol = symbol
       this.value += symbol;
-    },
+    },  
     reset() {
       this.value = "";
     },
-    removeLast() {},
+    removeLast() {
+      if(this.lastSymbol === ")") this.isOpen = true
+      if(this.lastSymbol === "(") this.isOpen = false
+      this.value = this.value.slice(0, this.value.length - 1)
+      this.lastSymbol = this.value[this.value.length -1]
+    },
   },
 };
 </script>
